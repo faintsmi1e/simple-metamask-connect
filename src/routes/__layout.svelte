@@ -3,9 +3,16 @@
   import { userTest, provider, userAuth } from '$lib/store';
   import { get } from 'svelte/store';
   import { onAccountChangeListener } from '../utils/metamaskListeners';
+  import { ethers } from 'ethers';
+  import MulticallService from '../service/multicall-service';
+  console.log('ghbdtn')
   if (browser) {
     const ethereum = window.ethereum;
     if (ethereum) {
+      console.log('вешаем обработчики');
+      const providerEth = new ethers.providers.Web3Provider(window.ethereum);
+      console.log(ethereum);
+      console.log('provider', providerEth);
       ethereum.on('accountsChanged', onAccountChangeListener);
 
       ethereum.on('chainChanged', (chainId) => {
@@ -19,7 +26,7 @@
       ethereum.on('disconnect', (chainId) => {
         console.log('disconnect', chainId);
       });
-      provider.set(ethereum);
+      provider.set(providerEth);
 
       if (get(userAuth) === 'true') {
         console.log('if', Boolean(get(userAuth)));
@@ -30,16 +37,18 @@
 </script>
 
 <script lang="ts">
-  import "../app.css";
-  import { onMount } from 'svelte';
+  import '../app.css';
+  import { onDestroy, onMount } from 'svelte';
 
   import { navigating } from '$app/stores';
 
   import { page, session } from '$app/stores';
 
   const onAddWalletClick = async () => {
-    const accounts = await $provider.request({ method: 'eth_requestAccounts' });
-    const changeNet = await $provider.request({
+    const accounts = await $provider.provider.request({
+      method: 'eth_requestAccounts',
+    });
+    const changeNet = await $provider.provider.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: '0x38' }],
     });
@@ -47,9 +56,9 @@
     userTest.setUserAddress(accounts[0]);
     userAuth.setAuth(true);
   };
-  console.log($session);
+
   const onDiscWalletClick = async () => {
-    const permissions = await $provider.request({
+    const permissions = await $provider.provider.request({
       method: 'wallet_requestPermissions',
       params: [
         {
@@ -57,41 +66,51 @@
         },
       ],
     });
-    const accounts = await $provider.request({ method: 'eth_requestAccounts' });
+    const accounts = await $provider.provider.request({
+      method: 'eth_requestAccounts',
+    });
   };
 
   const onDiscClick = () => {
     userTest.setUserAddress('');
     userAuth.setAuth(false);
   };
+
+  const onBalanceClick = async () => {
+    
+  };
+  onDestroy(() => {
+    console.log('убираем обработчики');
+  });
 </script>
 
 <div>
   <div class="nav__menu">
-    <ul>
-      <li class:active="{$page.path" =="=" '="" '}="">
-        <a sveltekit:prefetch="" href="/">Home</a>
+    <ul class="petya list-disc list-inside">
+      <li>
+        <a sveltekit:prefetch href="/">Home</a>
       </li>
-      <li class:active="{$page.path" =="=" '="" about'}="">
-        <a sveltekit:prefetch="" href="/about">About</a>
+      <li>
+        <a sveltekit:prefetch href="/about">About</a>
       </li>
-      <li class:active="{$page.path" =="=" '="" todos'}="">
-        <a sveltekit:prefetch="" href="/todos/aboutt">Todos</a>
+      <li>
+        <a sveltekit:prefetch href="/todos/aboutt">Todos</a>
       </li>
     </ul>
   </div>
   <div class="nav__buttons">
-    <button on:click="{onAddWalletClick}">CONNECT</button>
-    <button on:click="{onDiscWalletClick}">disConnect metamask </button>
-    <button on:click="{onDiscClick}">REAL DISC</button>
+    <button on:click={onAddWalletClick}>CONNECT</button>
+    <button on:click={onDiscWalletClick}>disConnect metamask </button>
+    <button on:click={onDiscClick}>REAL DISC</button>
+    <button on:click={onBalanceClick}>GET BALANCES</button>
   </div>
 </div>
 {#if !browser}
   <div>загрузка...</div>
 {:else}
   <main>
-    <slot>
-  </slot></main>
+    <slot />
+  </main>
 {/if}
 
 <footer>
@@ -160,5 +179,3 @@
     }
   }
 </style>
-
-<slot></slot>

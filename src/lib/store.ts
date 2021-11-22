@@ -1,9 +1,14 @@
-import {  writable  } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 import { browser } from '$app/env';
+import type { ethers } from 'ethers';
+import MulticallService from '../service/multicall-service';
+type provider = ethers.providers.Web3Provider;
+type Auth = {
+  subscribe: (this: void, run: any, invalidate?: any) => any;
+  setAuth: (isAuth: boolean) => void;
+};
 
-export const count = writable(0);
-
-export const provider = writable({} as any);
+export const provider = writable({} as provider);
 
 function createAuth() {
   const { subscribe, set, update } = writable(
@@ -12,14 +17,14 @@ function createAuth() {
   subscribe((val) => localStorage.setItem('isAuth', val.toString()));
   return {
     subscribe,
-    
+
     setAuth: (isAuth: boolean) => {
       console.log('set auth');
       set(isAuth);
     },
   };
 }
-// derived сделать от userAdress? true: false;
+
 function createUser() {
   const { subscribe, set, update } = writable({ address: '' });
 
@@ -37,11 +42,6 @@ function createUser() {
   };
 }
 
-type Auth = {
-  subscribe: (this: void, run: any, invalidate?:any) => any;
-  setAuth: (isAuth: boolean) => void;
-  
-};
 export let userAuth: Auth;
 
 if (browser) {
@@ -49,3 +49,14 @@ if (browser) {
 }
 
 export const userTest = createUser();
+
+// export const userBalance = derived(userTest, ($userTest, set) => {
+//   const getBalance = async () => {
+//     console.log('запрашиваем баланс')
+//     const [name, balance] = await MulticallService.getBalances(
+//       $userTest.address
+//     );
+//     set([name, balance]);
+//   };
+  
+// },['...loading','...loading']);

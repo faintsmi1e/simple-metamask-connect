@@ -21,5 +21,9 @@
     "cssnano": "^5.0.8",
     "tailwindcss": "^2.2.16"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "ethcall": "^4.2.5",
+    "ethers": "^5.5.1"
+  }
 }

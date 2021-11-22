@@ -3,17 +3,15 @@
 
 <script lang="ts">
   import Picture from '$lib/picture.svelte';
-  import { count, userTest, provider } from '$lib/store';
+  import {  userTest, provider } from '$lib/store';
   import { onMount } from 'svelte';
 
   let count_value: number;
-  count.subscribe((value) => {
-    count_value = value;
-  });
+  
 </script>
 
 <svelte:head>
-  <title>{count_value}</title>
+  <title></title>
 </svelte:head>
 
 <section>
