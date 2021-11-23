@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { provider } from '$lib/store';
-import { browser } from '$app/env';
+
 import { get } from 'svelte/store';
 
 const multicallAddress: string = '0x41263cBA59EB80dC200F3E2544eda4ed6A90E76C';

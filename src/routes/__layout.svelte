@@ -4,14 +4,12 @@
   import { get } from 'svelte/store';
   import { onAccountChangeListener } from '../utils/metamaskListeners';
   import { ethers } from 'ethers';
-  
-  console.log('ghbdtn')
+
   if (browser) {
     const ethereum = window.ethereum;
     if (ethereum) {
-      console.log('вешаем обработчики');
       const providerEth = new ethers.providers.Web3Provider(window.ethereum);
-      console.log(ethereum);
+
       console.log('provider', providerEth);
       ethereum.on('accountsChanged', onAccountChangeListener);
 
@@ -28,10 +26,8 @@
       });
       provider.set(providerEth);
 
-      if (get(userAuth) === 'true') {
-        console.log('if', Boolean(get(userAuth)));
-        userTest.setUserAddress('0x7efaef62fddcca950418312c6c91aef321375a00'); //ethereum.selectedAddress
-      }
+      (get(userAuth) === 'true') && 
+        userTest.setUserAddress(ethereum.selectedAddress); //ethereum.selectedAddress
       
     }
   }
@@ -39,11 +35,9 @@
 
 <script lang="ts">
   import '../app.css';
-  import { onDestroy, onMount } from 'svelte';
+  
 
-  import { navigating } from '$app/stores';
-
-  import { page, session } from '$app/stores';
+ 
 
   const onAddWalletClick = async () => {
     const accounts = await $provider.provider.request({
@@ -78,13 +72,11 @@
   };
 
   const onBalanceClick = async () => {
-    console.log('balance', $userBalance)
-    console.log($userBalance[1])
+    console.log('balance', $userBalance);
+    console.log($userBalance);
+    console.log(await $provider.getBalance($userTest.address));
   };
-  onDestroy(() => {
-    
-    console.log('убираем обработчики');
-  });
+  
 </script>
 
 <div>
@@ -103,7 +95,7 @@
   </div>
   <div class="nav__buttons">
     <button on:click={onAddWalletClick}>CONNECT</button>
-    <button on:click={onDiscWalletClick}>disConnect metamask </button>
+    <button on:click={onDiscWalletClick}>Change Wallet</button>
     <button on:click={onDiscClick}>REAL DISC</button>
     <button on:click={onBalanceClick}>GET BALANCES</button>
   </div>

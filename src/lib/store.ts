@@ -60,8 +60,7 @@ export const userBalance = derived(userTest, ($userTest, set) => {
     console.log('response',multicallResult )
     set(multicallResult);
   };
-  if(browser) {
+  if($userTest.address) {
     fetchBalances();
   }
-  
 });

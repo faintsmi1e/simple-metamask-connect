@@ -1,22 +1,26 @@
 import { getMulticallContract } from '../contracts/multicall-contract';
-import USDTService from './usdt-service';
+import ERC20Service from './erc20-service';
 import type { BigNumber } from 'ethers';
-import { encode, decode } from 'hex-encode-decode';
-type multicallResult = [
-  BigNumber,
-  string[]
-]
+import { ERC20TokensAddresses } from '../interfaces/ERC20';
 
+type multicallResult = [BigNumber, string[]];
 
 export async function getBalances(address: string) {
-  const calls = [...(await USDTService.encodeBalanceCall(address)),...(await USDTService.encodeBalanceCall(address))];
-  console.log(calls);
-  const multiCallResult: multicallResult = await getMulticallContract().aggregate(calls);
-  console.log(multiCallResult);
-  const readableRes = USDTService.decodeBalanceCall(multiCallResult[1]);
-  console.log(readableRes);
+  const multiCallContract = getMulticallContract();
+  
+  const callsArray = ERC20TokensAddresses.map((tokenAddress) => {
+    return ERC20Service.encodeBalanceCall(address, tokenAddress);
+  });
+
+  const multiCallResults: multicallResult[] = await Promise.all(
+    callsArray.map((calls) => {
+      return multiCallContract.aggregate(calls);
+    })
+  );
+  
+  const readableRes = multiCallResults.map(result => {
+    return ERC20Service.decodeBalanceCall(result[1])
+  })
 
   return readableRes;
 }
-
-
