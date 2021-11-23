@@ -1,7 +1,10 @@
 import { writable, derived } from 'svelte/store';
 import { browser } from '$app/env';
+
+import { getBalances } from '../service/multicall-service';
+
 import type { ethers } from 'ethers';
-import MulticallService from '../service/multicall-service';
+
 type provider = ethers.providers.Web3Provider;
 type Auth = {
   subscribe: (this: void, run: any, invalidate?: any) => any;
@@ -50,13 +53,15 @@ if (browser) {
 
 export const userTest = createUser();
 
-// export const userBalance = derived(userTest, ($userTest, set) => {
-//   const getBalance = async () => {
-//     console.log('запрашиваем баланс')
-//     const [name, balance] = await MulticallService.getBalances(
-//       $userTest.address
-//     );
-//     set([name, balance]);
-//   };
+export const userBalance = derived(userTest, ($userTest, set) => {
+  const fetchBalances = async () => {
+    console.log('setBalance')
+    const multicallResult = await getBalances($userTest.address);
+    console.log('response',multicallResult )
+    set(multicallResult);
+  };
+  if(browser) {
+    fetchBalances();
+  }
   
-// },['...loading','...loading']);
+});

@@ -24,6 +24,7 @@
   "type": "module",
   "dependencies": {
     "ethcall": "^4.2.5",
-    "ethers": "^5.5.1"
+    "ethers": "^5.5.1",
+    "hex-encode-decode": "^1.0.0"
   }
 }

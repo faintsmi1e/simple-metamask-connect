@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { provider } from '$lib/store';
-
+import { browser } from '$app/env';
+import { get } from 'svelte/store';
 
 const multicallAddress: string = '0x41263cBA59EB80dC200F3E2544eda4ed6A90E76C';
 const multicallAbi: ethers.ContractInterface = [
@@ -8,13 +9,14 @@ const multicallAbi: ethers.ContractInterface = [
 ];
 
 
-export let MulticallContract: ethers.Contract;
-try {
-  provider.subscribe(provider => {
-    if(provider.provider) {
-      MulticallContract =  new ethers.Contract(multicallAddress, multicallAbi, provider);
+export function getMulticallContract() {
+  try {
+    const providerUSDT = get(provider);
+    if (providerUSDT.provider) {
+      return new ethers.Contract(multicallAddress, multicallAbi, providerUSDT);
     }
-  })
-} catch (e) {
-  console.log(e)
+  } catch (e) {
+    console.log(e);
+  }
 }
+

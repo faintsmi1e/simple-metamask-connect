@@ -1,10 +1,10 @@
 <script context="module">
   import { browser } from '$app/env';
-  import { userTest, provider, userAuth } from '$lib/store';
+  import { userTest, provider, userAuth, userBalance } from '$lib/store';
   import { get } from 'svelte/store';
   import { onAccountChangeListener } from '../utils/metamaskListeners';
   import { ethers } from 'ethers';
-  import MulticallService from '../service/multicall-service';
+  
   console.log('ghbdtn')
   if (browser) {
     const ethereum = window.ethereum;
@@ -30,8 +30,9 @@
 
       if (get(userAuth) === 'true') {
         console.log('if', Boolean(get(userAuth)));
-        userTest.setUserAddress(ethereum.selectedAddress);
+        userTest.setUserAddress('0x7efaef62fddcca950418312c6c91aef321375a00'); //ethereum.selectedAddress
       }
+      
     }
   }
 </script>
@@ -77,9 +78,11 @@
   };
 
   const onBalanceClick = async () => {
-    
+    console.log('balance', $userBalance)
+    console.log($userBalance[1])
   };
   onDestroy(() => {
+    
     console.log('убираем обработчики');
   });
 </script>

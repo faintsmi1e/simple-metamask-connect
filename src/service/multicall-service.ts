@@ -1,17 +1,22 @@
-import { MulticallContract } from '../contracts/multicall-contract';
+import { getMulticallContract } from '../contracts/multicall-contract';
 import USDTService from './usdt-service';
-import { ethers } from 'ethers';
-export default class MulticallService {
-  
-  static async getBalances(address: string) {
-    const calls = [...await USDTService.encodeBalanceCall(address)]
-    
-    const multiCallResult = await MulticallContract.aggregate(calls);
-    
-    const utf8Strings = multiCallResult[1].map((result: string) => {
-      return ethers.utils.toUtf8String(ethers.utils.hexStripZeros(result)).replace(/\0/g, '')
-    })
-    
-    return utf8Strings;
-  }
+import type { BigNumber } from 'ethers';
+import { encode, decode } from 'hex-encode-decode';
+type multicallResult = [
+  BigNumber,
+  string[]
+]
+
+
+export async function getBalances(address: string) {
+  const calls = [...(await USDTService.encodeBalanceCall(address)),...(await USDTService.encodeBalanceCall(address))];
+  console.log(calls);
+  const multiCallResult: multicallResult = await getMulticallContract().aggregate(calls);
+  console.log(multiCallResult);
+  const readableRes = USDTService.decodeBalanceCall(multiCallResult[1]);
+  console.log(readableRes);
+
+  return readableRes;
 }
+
+
