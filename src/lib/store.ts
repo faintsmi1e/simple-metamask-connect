@@ -1,3 +1,4 @@
+/// <reference types="svelte" />
 import { writable, derived} from 'svelte/store';
 import { browser } from '$app/env';
 

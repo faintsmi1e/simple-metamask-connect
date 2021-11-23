@@ -1,3 +1,4 @@
+/// <reference types="svelte" />
 import { ERC20 } from '../interfaces/ERC20';
 
 
