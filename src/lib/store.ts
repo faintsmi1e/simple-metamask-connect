@@ -1,10 +1,9 @@
 /// <reference types="svelte" />
-import { writable, derived} from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 import { browser } from '$app/env';
-
 import { getBalances } from '../service/multicall-service';
 
-import type {Readable} from 'svelte/store';
+import type { Readable } from 'svelte/store';
 import type { ethers } from 'ethers';
 
 type provider = ethers.providers.Web3Provider;
@@ -25,7 +24,6 @@ function createAuth() {
     subscribe,
 
     setAuth: (isAuth: string) => {
-      console.log('set auth');
       set(isAuth);
     },
   };
@@ -36,38 +34,34 @@ function createUser() {
 
   return {
     subscribe,
-    increment: () => {},
 
     setUserAddress: (address: string) => {
-      console.log('set adress');
       update((user) => {
         user.address = address;
         return user;
       });
     },
   };
-}
+};
 
 export let userAuth: Auth;
 
 if (browser) {
   userAuth = createAuth();
-}
+};
 
 export const userAccount = createUser();
 
 export const userBalance: Readable<any[]> = derived(
   userAccount,
   ($userAccount, set) => {
-    
     const fetchBalances = async () => {
-      console.log('setBalance');
       const multicallResult = await getBalances($userAccount.address);
-      console.log('response', multicallResult);
       set(multicallResult);
     };
     $userAccount.address ? fetchBalances() : set([]);
-  },[]
+  },
+  []
 );
 
 export const storeReload = () => {

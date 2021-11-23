@@ -21,8 +21,8 @@
 
       get(userAuth) === 'true' &&
         userAccount.setUserAddress(ethereum.selectedAddress);
-    }
-  }
+    };
+  };
 </script>
 
 <script lang="ts">
@@ -43,14 +43,12 @@
     } catch (e) {
       storeReload();
       console.log(e);
-    }
+    };
   };
 
   const disconnectWallet = () => {
     userAccount.setUserAddress('');
-    console.log($userAuth);
     userAuth.setAuth('false');
-    console.log($userAuth);
   };
 </script>
 

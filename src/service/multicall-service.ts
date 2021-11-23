@@ -3,7 +3,6 @@ import ERC20Service from './erc20-service';
 import type { BigNumber } from 'ethers';
 import { ERC20TokensAddresses } from '../interfaces/ERC20';
 
-
 type multicallResult = [BigNumber, string[]];
 
 export async function getBalances(address: string) {
@@ -21,7 +20,7 @@ export async function getBalances(address: string) {
   
   const readableRes = multiCallResults.map(result => {
     return ERC20Service.decodeBalanceCall(result[1])
-  })
+  });
 
   return readableRes;
-}
+};

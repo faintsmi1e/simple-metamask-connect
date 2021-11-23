@@ -1,5 +1,3 @@
-
-
 export function isBSCNetwork(etherum) {
   if(!etherum) {
     console.log('install metamask!');
