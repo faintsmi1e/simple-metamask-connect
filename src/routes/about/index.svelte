@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { userTest } from '$lib/store';
+  import { userAccount } from '$lib/store';
 </script>
 
 <svelte:head>
@@ -8,7 +8,7 @@
 
 <section>
   <h2>
-    Your test wallet: {$userTest.address}
+    Your test wallet: {$userAccount.address}
   </h2>
   <h1>
     <div class="welcome" />

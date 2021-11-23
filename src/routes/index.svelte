@@ -3,21 +3,31 @@
 
 <script lang="ts">
   import Picture from '$lib/picture.svelte';
-  import {  userTest, provider } from '$lib/store';
-  import { onMount } from 'svelte';
-
-  let count_value: number;
+  import { userAccount, userBalance, userAuth } from '$lib/store';
+  
   
 </script>
 
 <svelte:head>
-  <title></title>
+  <title />
 </svelte:head>
 
 <section>
-  <h2>
-    Your wallet: {$userTest.address}
-  </h2>
+  {#if $userAuth === 'true'}
+    <h2>
+      Your wallet: {$userAccount.address}
+    </h2>
+    <h2>Your balance:</h2>
+    {#each $userBalance as balance}
+      {#if balance.balance}
+        <p>{balance.name} , {balance.balance}</p>
+      {:else}
+        <p>{balance.name}: 0</p>
+      {/if}
+    {/each}
+  {:else}
+ 
+
   <h1>
     <div class="welcome">
       <Picture />
@@ -29,6 +39,12 @@
   <h2>
     try editing <strong>src/routes/index.svelte</strong>
   </h2>
+  
+  {/if}
+
+  
+
+  
 </section>
 
 <style>

@@ -1,103 +1,66 @@
 <script context="module">
   import { browser } from '$app/env';
-  import { userTest, provider, userAuth, userBalance } from '$lib/store';
+  import { userAccount, provider, userAuth, storeReload } from '$lib/store';
   import { get } from 'svelte/store';
-  import { onAccountChangeListener } from '../utils/metamaskListeners';
+  import {
+    onAccountChangeListener,
+    onChainChangeListener,
+  } from '../utils/metamaskListeners';
   import { ethers } from 'ethers';
+ 
 
   if (browser) {
     const ethereum = window.ethereum;
     if (ethereum) {
       const providerEth = new ethers.providers.Web3Provider(window.ethereum);
-
-      console.log('provider', providerEth);
-      ethereum.on('accountsChanged', onAccountChangeListener);
-
-      ethereum.on('chainChanged', (chainId) => {
-        console.log('chainChanged', chainId);
-      });
-
-      ethereum.on('connect', (chainId) => {
-        console.log('connect', chainId);
-      });
-
-      ethereum.on('disconnect', (chainId) => {
-        console.log('disconnect', chainId);
-      });
       provider.set(providerEth);
 
-      (get(userAuth) === 'true') && 
-        userTest.setUserAddress(ethereum.selectedAddress); //ethereum.selectedAddress
-      
+      ethereum.on('accountsChanged', onAccountChangeListener);
+
+      ethereum.on('chainChanged', onChainChangeListener);
+
+      get(userAuth) === 'true' &&
+        userAccount.setUserAddress(ethereum.selectedAddress);
     }
   }
 </script>
 
 <script lang="ts">
   import '../app.css';
-  
 
- 
-
-  const onAddWalletClick = async () => {
-    const accounts = await $provider.provider.request({
-      method: 'eth_requestAccounts',
-    });
-    const changeNet = await $provider.provider.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x38' }],
-    });
-
-    userTest.setUserAddress(accounts[0]);
-    userAuth.setAuth(true);
+  const connectWallet = async () => {
+    try {
+      const accounts = await $provider.provider.request({
+        method: 'eth_requestAccounts',
+      });
+      const changeNet = await $provider.provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x38' }],
+      });
+      provider.set(new ethers.providers.Web3Provider(window.ethereum));
+      userAccount.setUserAddress(accounts[0]);
+      userAuth.setAuth('true');
+    } catch (e) {
+      storeReload();
+      console.log(e);
+    }
   };
 
-  const onDiscWalletClick = async () => {
-    const permissions = await $provider.provider.request({
-      method: 'wallet_requestPermissions',
-      params: [
-        {
-          eth_accounts: {},
-        },
-      ],
-    });
-    const accounts = await $provider.provider.request({
-      method: 'eth_requestAccounts',
-    });
+  const disconnectWallet = () => {
+    userAccount.setUserAddress('');
+    console.log($userAuth);
+    userAuth.setAuth('false');
+    console.log($userAuth);
   };
-
-  const onDiscClick = () => {
-    userTest.setUserAddress('');
-    userAuth.setAuth(false);
-  };
-
-  const onBalanceClick = async () => {
-    console.log('balance', $userBalance);
-    console.log($userBalance);
-    console.log(await $provider.getBalance($userTest.address));
-  };
-  
 </script>
 
 <div>
-  <div class="nav__menu">
-    <ul class="petya list-disc list-inside">
-      <li>
-        <a sveltekit:prefetch href="/">Home</a>
-      </li>
-      <li>
-        <a sveltekit:prefetch href="/about">About</a>
-      </li>
-      <li>
-        <a sveltekit:prefetch href="/todos/aboutt">Todos</a>
-      </li>
-    </ul>
-  </div>
   <div class="nav__buttons">
-    <button on:click={onAddWalletClick}>CONNECT</button>
-    <button on:click={onDiscWalletClick}>Change Wallet</button>
-    <button on:click={onDiscClick}>REAL DISC</button>
-    <button on:click={onBalanceClick}>GET BALANCES</button>
+    {#if $userAuth === 'false'}
+      <button on:click={connectWallet}>CONNECT</button>
+    {:else if $userAuth === 'true'}
+      <button on:click={disconnectWallet}>DISCONNECT</button>
+    {/if}
   </div>
 </div>
 {#if !browser}
