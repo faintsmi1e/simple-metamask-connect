@@ -4,7 +4,7 @@ import { browser } from '$app/env';
 import { getBalances } from '../service/multicall-service';
 
 import type { Readable } from 'svelte/store';
-import type { ethers } from 'ethers';
+import type { ethers, BigNumber } from 'ethers';
 
 type provider = ethers.providers.Web3Provider;
 type Auth = {
@@ -52,12 +52,22 @@ if (browser) {
 
 export const userAccount = createUser();
 
-export const userBalance: Readable<any[]> = derived(
-  userAccount,
-  ($userAccount, set) => {
+export type UBalance = {
+  multicallResult: { name: string; symbol: string; balance: string }[];
+  bnbBalance: string;
+};
+const defaultBalance = {
+  multicallResult: [],
+  bnbBalance: '',
+};
+
+export const userBalance: Readable<UBalance> = derived(
+  [userAccount,provider],
+  ([$userAccount,$provider], set) => {
     const fetchBalances = async () => {
       const multicallResult = await getBalances($userAccount.address);
-      set(multicallResult);
+      const bnbBalance = (await $provider.getBalance($userAccount.address)).toString();
+      set({ multicallResult, bnbBalance });
     };
 
     let intervalId: NodeJS.Timer;
@@ -68,15 +78,15 @@ export const userBalance: Readable<any[]> = derived(
         fetchBalances();
       }, 10000);
     } else {
-      set([]);
-    };
+      set(defaultBalance);
+    }
 
     return () => {
       clearInterval(intervalId);
       intervalId = null;
     };
   },
-  []
+  defaultBalance
 );
 
 export const storeReset = () => {
