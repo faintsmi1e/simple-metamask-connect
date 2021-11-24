@@ -1,6 +1,6 @@
 /// <reference types="svelte" />
 import { ERC20 } from '../interfaces/ERC20';
-
+import { ethers } from 'ethers';
 export default class ERC20Service {
   static encodeBalanceCall(address: string, erc20ConctractAddress: string) {
     return [
@@ -24,19 +24,21 @@ export default class ERC20Service {
   };
 
   static decodeBalanceCall(array: string[]) {
+    const MAX_LENGTH = 18;
     const name = String(ERC20.decodeFunctionResult('name', array[0])[0]);
     const symbol = String(ERC20.decodeFunctionResult('symbol', array[1])[0]);
     const decimals = String(
       ERC20.decodeFunctionResult('decimals', array[2])[0]
     );
-    const balance: string = ERC20.decodeFunctionResult(
+    console.log(decimals);
+    const balance: string = ethers.utils.formatUnits(ERC20.decodeFunctionResult(
       'balanceOf',
       array[3]
-    )[0].toString();
+    )[0].toString(), decimals);
     return {
       name,
       symbol,
-      balance: balance.slice(0, balance.length - Number(decimals)),
+      balance: balance.slice(0, MAX_LENGTH),
     };
   };
 };

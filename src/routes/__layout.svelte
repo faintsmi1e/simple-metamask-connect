@@ -19,7 +19,7 @@
       ethereum.on('chainChanged', onChainChangeListener);
 
       get(userAuth) === 'true' &&
-        userAccount.setUserAddress(ethereum.selectedAddress);
+        userAccount.setUserAddress(ethereum.selectedAddress); 
     }
   }
 </script>

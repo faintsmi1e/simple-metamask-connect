@@ -1,4 +1,5 @@
-{ "homepage": "http://pinosol.github.io/simple-metamask-connect",
+{
+  "homepage": "http://pinosol.github.io/simple-metamask-connect",
   "name": "metamask-t",
   "version": "0.0.1",
   "scripts": {
@@ -6,20 +7,23 @@
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
+    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+    "deploy": "node ./gh-pages.js"
   },
   "devDependencies": {
+    "@sveltejs/adapter-static": "^1.0.0-next.0",
     "@sveltejs/kit": "next",
+    "autoprefixer": "^10.3.7",
+    "cssnano": "^5.0.8",
+    "gh-pages": "^3.2.3",
+    "postcss": "^8.3.9",
+    "postcss-load-config": "^3.1.0",
     "svelte": "^3.42.6",
     "svelte-check": "^2.2.6",
     "svelte-preprocess": "^4.9.8",
+    "tailwindcss": "^2.2.16",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3",
-    "postcss": "^8.3.9",
-    "postcss-load-config": "^3.1.0",
-    "autoprefixer": "^10.3.7",
-    "cssnano": "^5.0.8",
-    "tailwindcss": "^2.2.16"
+    "typescript": "^4.4.3"
   },
   "type": "module",
   "dependencies": {
