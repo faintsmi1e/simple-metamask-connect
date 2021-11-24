@@ -1,13 +1,12 @@
 <script context="module">
   import { browser } from '$app/env';
-  import { userAccount, provider, userAuth, storeReload } from '$lib/store';
+  import { userAccount, provider, userAuth, storeReset } from '$lib/store';
   import { get } from 'svelte/store';
   import {
     onAccountChangeListener,
     onChainChangeListener,
   } from '../utils/metamaskListeners';
   import { ethers } from 'ethers';
- 
 
   if (browser) {
     const ethereum = window.ethereum;
@@ -21,8 +20,8 @@
 
       get(userAuth) === 'true' &&
         userAccount.setUserAddress(ethereum.selectedAddress);
-    };
-  };
+    }
+  }
 </script>
 
 <script lang="ts">
@@ -41,9 +40,9 @@
       userAccount.setUserAddress(accounts[0]);
       userAuth.setAuth('true');
     } catch (e) {
-      storeReload();
+      storeReset();
       console.log(e);
-    };
+    }
   };
 
   const disconnectWallet = () => {
@@ -52,86 +51,21 @@
   };
 </script>
 
-<div>
-  <div class="nav__buttons">
+<div class="p-8 max-w-6xl mx-auto">
+  <div class="flex justify-end w-full">
     {#if $userAuth === 'false'}
-      <button on:click={connectWallet}>CONNECT</button>
+      <button class="p-2 bg-pink-300 text-gray-900 text-center rounded-md shadow-sm hover:shadow-md flex flex-col items-center" on:click={connectWallet}>CONNECT</button>
     {:else if $userAuth === 'true'}
-      <button on:click={disconnectWallet}>DISCONNECT</button>
+      <button class="p-2 bg-pink-300 text-gray-900 text-center rounded-md shadow-sm hover:shadow-md flex flex-col items-center" on:click={disconnectWallet}
+        >DISCONNECT</button
+      >
     {/if}
   </div>
+  {#if !browser}
+    <div>loading...</div>
+  {:else}
+    <main >
+      <slot />
+    </main>
+  {/if}
 </div>
-{#if !browser}
-  <div>загрузка...</div>
-{:else}
-  <main>
-    <slot />
-  </main>
-{/if}
-
-<footer>
-  <p>
-    visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit
-  </p>
-</footer>
-
-<style>
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    width: 100%;
-    max-width: 1024px;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
-
-  footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-  }
-
-  footer a {
-    font-weight: bold;
-  }
-
-  button {
-    background-color: #5f49ff;
-    border-radius: 4px;
-    border: none;
-    height: 26px;
-    cursor: pointer;
-    color: white;
-
-    font-family: 'Open Sans', sans-serif;
-
-    margin-bottom: 5px;
-    margin-right: 10px;
-
-    padding: 5px 5px;
-
-    box-sizing: content-box;
-
-    text-align: center;
-  }
-
-  div {
-    display: flex;
-  }
-  .nav__menu {
-    display: flex;
-  }
-  .nav__buttons {
-    margin-left: auto;
-  }
-
-  @media (min-width: 480px) {
-    footer {
-      padding: 40px 0;
-    }
-  }
-</style>

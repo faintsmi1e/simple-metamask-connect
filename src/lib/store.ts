@@ -42,13 +42,13 @@ function createUser() {
       });
     },
   };
-};
+}
 
 export let userAuth: Auth;
 
 if (browser) {
   userAuth = createAuth();
-};
+}
 
 export const userAccount = createUser();
 
@@ -59,12 +59,27 @@ export const userBalance: Readable<any[]> = derived(
       const multicallResult = await getBalances($userAccount.address);
       set(multicallResult);
     };
-    $userAccount.address ? fetchBalances() : set([]);
+
+    let intervalId: NodeJS.Timer;
+
+    if ($userAccount.address) {
+      fetchBalances();
+      intervalId = setInterval(() => {
+        fetchBalances();
+      }, 10000);
+    } else {
+      set([]);
+    };
+
+    return () => {
+      clearInterval(intervalId);
+      intervalId = null;
+    };
   },
   []
 );
 
-export const storeReload = () => {
+export const storeReset = () => {
   userAccount.setUserAddress('');
   userAuth.setAuth('false');
 };

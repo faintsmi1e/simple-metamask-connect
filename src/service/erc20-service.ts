@@ -2,22 +2,22 @@
 import { ERC20 } from '../interfaces/ERC20';
 
 export default class ERC20Service {
-  static encodeBalanceCall(address: string, erc20ConctractAdress: string) {
+  static encodeBalanceCall(address: string, erc20ConctractAddress: string) {
     return [
       {
-        target: erc20ConctractAdress,
+        target: erc20ConctractAddress,
         callData: ERC20.encodeFunctionData('name'),
       },
       {
-        target: erc20ConctractAdress,
+        target: erc20ConctractAddress,
         callData: ERC20.encodeFunctionData('symbol'),
       },
       {
-        target: erc20ConctractAdress,
+        target: erc20ConctractAddress,
         callData: ERC20.encodeFunctionData('decimals'),
       },
       {
-        target: erc20ConctractAdress,
+        target: erc20ConctractAddress,
         callData: ERC20.encodeFunctionData('balanceOf', [`${address}`]),
       },
     ] as const;
