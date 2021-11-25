@@ -24,7 +24,7 @@ export default class ERC20Service {
   };
 
   static decodeBalanceCall(array: string[]) {
-    const MAX_LENGTH = 18;
+    
     const name = String(ERC20.decodeFunctionResult('name', array[0])[0]);
     const symbol = String(ERC20.decodeFunctionResult('symbol', array[1])[0]);
     const decimals = String(
@@ -38,7 +38,7 @@ export default class ERC20Service {
     return {
       name,
       symbol,
-      balance: balance.slice(0, MAX_LENGTH),
+      balance: Number(balance).toFixed(2),
     };
   };
 };

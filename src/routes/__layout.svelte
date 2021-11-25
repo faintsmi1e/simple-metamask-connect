@@ -19,7 +19,7 @@
       ethereum.on('chainChanged', onChainChangeListener);
 
       get(userAuth) === 'true' &&
-        userAccount.setUserAddress(ethereum.selectedAddress); 
+        userAccount.setUserAddress(ethereum.selectedAddress); //0xf977814e90da44bfa03b6295a0616a897441acec / ethereum.selectedAddress
     }
   }
 </script>
@@ -46,8 +46,7 @@
   };
 
   const disconnectWallet = () => {
-    userAccount.setUserAddress('');
-    userAuth.setAuth('false');
+    storeReset();
   };
 </script>
 

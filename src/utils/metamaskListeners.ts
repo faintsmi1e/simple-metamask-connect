@@ -5,6 +5,8 @@ export const onAccountChangeListener = (accounts: string[]) => {
   if (accounts[0] && get(userAuth)) {
     userAccount.setUserAddress(accounts[0]);
     userAuth.setAuth('true');
+  }else {
+    storeReset();
   }
 };
 
